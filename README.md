@@ -1,6 +1,9 @@
 # hey-ya
 Z shell widget to add an LLM-powered assistant to your command-line.
 
+## Prerequisites
+This widget uses [`jq`](https://github.com/jqlang/jq). To install, run `brew install jq`.
+
 ## Setup
 To obtain this Z shell widget, follow these steps:
 
