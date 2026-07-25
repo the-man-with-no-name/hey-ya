@@ -7,7 +7,7 @@ This widget uses [`jq`](https://github.com/jqlang/jq). To install, run `brew ins
 ## Setup
 To obtain this Z shell widget, follow these steps:
 
-1. Clone this repository with `git clone https://github.com/the-man-with-no-name/hey-ya.git`.
+1. Clone this repository with `git clone https://github.com/the-man-with-no-name/hey.git`.
 2. Add the following line to your `~/.zshrc` file: `source <HEY-PATH>/hey.zsh` where `HEY-PATH` is the fully-qualified path to your cloned repository.
 
 ## Configuration
@@ -32,7 +32,7 @@ me@machine % ps -e | wc -l
 
 This leaves you with the option to choose whether or not to run the command.
 
-### hey -ya
+### hey info
 
 To provide more information about the results of the `hey` command, use the `hey -- -i` pattern.
 
