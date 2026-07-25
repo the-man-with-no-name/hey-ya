@@ -44,10 +44,10 @@ function _hey_logic() {
 
     local system_prompt_summary="You are a zsh assistant on a Mac computer.
     Return a summary of what the user is asking in a short, simple sentence.
-    DO NOT include the shell comman itself as part of your response, plain english only.
+    DO NOT include the shell command itself as part of your response, plain english only.
     Start the summary sentence with the verb and do not say YOU or THE USER, keep it simple.
-    Flag any command that could destroy files or directories as DESTRUCTIVE and WARN the user!
-    Flag any command that could take large amounts of time (more than a few seconds) as SLOW and WARN the user!
+    If the command is destructive, start the summary with DESTRUCTIVE.
+    If the command takes large amounts of time, start the summary with SLOW.
     This output is displayed in a terminal environment, format the output as such.
     Do not include conversational intro or outro.
     Wrap lines at 80 characters to fit standard terminal windows.
