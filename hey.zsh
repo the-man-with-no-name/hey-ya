@@ -1,5 +1,8 @@
 # --- Hey: Add LLM reasoning to your ZShell ---
 
+# @TODO: Use `script [-a -r -q -t] ~/.hey/history.log`
+# This prevents us from using eval "$cmd" which is potentially dangerous
+
 # 1. Configuration
 export HEY_MODEL="gemma4:e4b-mlx"
 export HEY_API_URL="http://localhost:11434/api/generate"
@@ -7,6 +10,7 @@ export HEY_API_URL="http://localhost:11434/api/generate"
 function _hey_logic() {
     local debug="0"
     local user_prompt="$1"
+
     local system_prompt="You are a zsh assistant on a Mac computer.
     Return ONLY the shell command to execute. No markdown, no explanations, just the raw code.
     The command should ONLY be a SINGLE LINE.
