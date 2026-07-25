@@ -11,10 +11,10 @@ To obtain this Z shell widget, follow these steps:
 2. Add the following line to your `~/.zshrc` file: `source <HEY-PATH>/hey.zsh` where `HEY-PATH` is the fully-qualified path to your cloned repository.
 
 ## Configuration
-`hey-ya` is currently only prepared to integrate with local models obtained through `ollama`. To change the model in use, change the value of `HEY_MODEL` to your preferred value.
+`hey` is currently only prepared to integrate with local models obtained through `ollama`. To change the model in use, change the value of `HEY_MODEL` to your preferred value.
 
 ## Usage
-`hey-ya` is designed to help you run the zsh commands you want by entering plain language and suggesting the appropriate command.
+`hey` is designed to help you run the zsh commands you want by entering plain language and suggesting the appropriate command.
 
 ### hey
 
@@ -34,10 +34,10 @@ This leaves you with the option to choose whether or not to run the command.
 
 ### hey -ya
 
-To provide more information about the results of the `hey` command, use the `hey-ya` pattern.
+To provide more information about the results of the `hey` command, use the `hey -- -i` pattern.
 
 ```
-me@machine % hey -- -ya
+me@machine % hey -- -i
 ```
 
 This looks back at the last command you ran and the results of this command and provides a summary of the command what the results mean.
@@ -45,5 +45,5 @@ This looks back at the last command you ran and the results of this command and 
 To obtain information unrelated to your command history, try
 
 ```
-me@machine % hey -- -ya how does ps work on macOS
+me@machine % hey -- -i how does ps work on macOS
 ```

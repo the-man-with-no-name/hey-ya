@@ -7,13 +7,31 @@
 export HEY_MODEL="gemma4:e4b-mlx"
 export HEY_API_URL="http://localhost:11434/api/generate"
 
-function _hey_logic() {
+# Usage: _debug "<CATEGORY>" "<TEXT>"
+function _debug() {
     local debug="0"
+    local debug_color="#56B4E9"
+    if [[ $debug == 1 ]]; then
+        print -Pn "%F{$debug_color}($1:)%f" "$2" "\n"
+    fi
+}
+
+# Usage: _think
+function _think() {
+    # Print thinking message
+    print -Pn "%F{$think_color}Thinking...%f\r"
+}
+
+function _hey_logic() {
     local user_prompt="$1"
 
     local system_prompt="You are a zsh assistant on a Mac computer.
     Return ONLY the shell command to execute. No markdown, no explanations, just the raw code.
-    The command should ONLY be a SINGLE LINE.
+    The command should ONLY be a single line. DO NOT return a command spanning multiple lines with newline characters.
+    This output is displayed in a terminal environment, format the output as such.
+    Do not include conversational intro or outro.
+    Wrap lines at 80 characters to fit standard terminal windows.
+    Strip markdown blocks and markdown headers, do not use triple backticks or markdown fences or headings.
     Ensure you use a backslash to escape all necessary characters such as:
         newlines,
         spaces in file or directory names,
@@ -30,6 +48,10 @@ function _hey_logic() {
     Start the summary sentence with the verb and do not say YOU or THE USER, keep it simple.
     Flag any command that could destroy files or directories as DESTRUCTIVE and WARN the user!
     Flag any command that could take large amounts of time (more than a few seconds) as SLOW and WARN the user!
+    This output is displayed in a terminal environment, format the output as such.
+    Do not include conversational intro or outro.
+    Wrap lines at 80 characters to fit standard terminal windows.
+    Strip markdown blocks and markdown headers, do not use triple backticks or markdown fences or headings.
     Ensure you use a backslash to escape all necessary characters such as:
         newlines,
         spaces in file or directory names,
@@ -46,34 +68,26 @@ function _hey_logic() {
     local debug_color="#56B4E9"
 
     # Print thinking message
-    print -Pn "%F{$think_color}Thinking...%f\r"
+    _think
 
     # Construct json payload for curl request
-    local summary_payload=$(jq -n --arg model "$HEY_MODEL" --arg prompt_s "$user_prompt" --arg system_s "$system_prompt_summary" '{model: $model, prompt: $prompt_s, system: $system_s, stream: false}')
-    if [[ $debug == 1 ]]; then
-        print -Pn "%F{$debug_color}(Summary Payload:)%f" "$summary_payload" "\n"
-    fi
+    local summary_payload="$(jq -n --arg model "$HEY_MODEL" --arg prompt_s "$user_prompt" --arg system_s "$system_prompt_summary" '{model: $model, prompt: $prompt_s, system: $system_s, stream: false}')"
+    _debug "Summary Payload" "$summary_payload"
 
-    local response_summary=$(curl -s "$HEY_API_URL" --data-binary "$summary_payload")
-    if [[ $debug == 1 ]]; then
-        print -Pn "%F{$debug_color}(Summary Response:)%f" "$response_summary" "\n"
-    fi
+    local response_summary="$(curl -s "$HEY_API_URL" --data-binary "$summary_payload")"
+    _debug "Summary Response" "$response_summary"
 
     # Construct json payload for curl request
-    local payload=$(jq -n --arg model "$HEY_MODEL" --arg prompt "$user_prompt" --arg system "$system_prompt" '{model: $model, prompt: $prompt, system: $system, stream: false}')
-    if [[ $debug == 1 ]]; then
-        print -Pn "%F{$debug_color}(Payload:)%f" "$payload" "\n"
-    fi
+    local payload="$(jq -n --arg model "$HEY_MODEL" --arg prompt "$user_prompt" --arg system "$system_prompt" '{model: $model, prompt: $prompt, system: $system, stream: false}')"
+    _debug "Payload" "$payload"
 
     # 3. Call the API using the file as input
     # We use --data-binary to ensure no character translation happens
-    local response=$(curl -s "$HEY_API_URL" --data-binary "$payload")
-    if [[ $debug == 1 ]]; then
-        print -Pn "%F{$debug_color}(Response:)%f" "$response" "\n"
-    fi
+    local response="$(curl -s "$HEY_API_URL" --data-binary "$payload")"
+    _debug "Response" "$response"
 
     # Print thinking message
-    local clean_text_summary=$(printf '%s\n' "$response_summary" | jq -r ".response")
+    local clean_text_summary="$(printf '%s\n' "$response_summary" | jq -r ".response")"
     print -Pn "%F{$info_color}$clean_text_summary%f\n"
 
     if [[ $? -ne 0 ]]; then
@@ -82,10 +96,8 @@ function _hey_logic() {
     fi
 
     # 4. Parse the response from the file
-    local clean_text=$(printf '%s\n' "$response" | jq -r ".response")
-    if [[ $debug == 1 ]]; then
-        print -Pn "%F{$debug_color}(Clean Text:)%f" "$clean_text" "\n"
-    fi
+    local clean_text="$(printf '%s\n' "$response" | jq -r ".response")"
+    _debug "Clean Text" "$clean_text"
 
     if [[ -z "$clean_text" || "$clean_text" == "null" ]]; then
         print -Pn "%F{$error_color}(Error: LLM returned nothing or invalid JSON)%f\n"
@@ -211,10 +223,10 @@ function _hey_widget() {
     if [[ $debug == 1 ]]; then
         print -Pn "\e[31m( Input: )\e[0m" "$input" "\n"
     fi
-    if (( $# >= 2 )); then
-        if [[ $2 == "-ya" ]]; then
+    if (( $# >= 1 )); then
+        if [[ $2 == "-i" ]]; then
             local input_stripped="${input#-- }"
-            local input_stripped_flag="${input_stripped#-ya}"
+            local input_stripped_flag="${input_stripped#-i}"
             _hey_info "$input_stripped_flag"
         else
             _hey_logic "$input"
