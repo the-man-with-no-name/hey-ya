@@ -1,4 +1,4 @@
-# hey-ya
+# hey
 Z shell widget to add an LLM-powered assistant to your command-line.
 
 ## Prerequisites
