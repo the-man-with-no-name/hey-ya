@@ -7,6 +7,9 @@
 export HEY_MODEL="gemma4:e4b-mlx"
 export HEY_API_URL="http://localhost:11434/api/generate"
 
+LOG_DIR="$HOME/.hey/logs"
+LOG_FILE="$LOG_DIR/session.log"
+
 # Usage: _debug "<CATEGORY>" "<TEXT>"
 function _debug() {
     local debug="0"
@@ -110,19 +113,16 @@ function _hey_info() {
     if [[ $1 =~ ^[[:space:]]*$ ]]; then
         local last_command=$(history | tail -n 1)
         local clean_last_command="${last_command##[0-9 ]#}"
-        local last_command_result=$(eval "$clean_last_command" 2>/dev/null)
 
         if [[ $debug == 1 ]]; then
             print -Pn "%F{$debug_color}get info about: last command%f\n"
             print -Pn "%F{$debug_color}$clean_last_command%f\n"
-            print -Pn "%F{$debug_color}$last_command_result%f\n"
         fi
 
         # Print thinking message
         print -Pn "%F{$think_color}Thinking...%f\r"
 
         local user_prompt="The last command the user ran is: $last_command
-        The result of this last command was: $last_command_result
         Give a brief explanation of what the last command does and what the result says."
 
         # Construct json payload for curl request
